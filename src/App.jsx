@@ -1,151 +1,181 @@
-import React, { useState } from 'react';
-import { Lock, Smartphone, CheckCircle, X, KeyRound } from 'lucide-react';
+import React from 'react';
 
-const App = () => {
-  const [bgColor, setBgColor] = useState('bg-gray-900');
-  const [pendingColor, setPendingColor] = useState(null);
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
-  
-  // New State for UTR Input
-  const [utr, setUtr] = useState('');
-  const [error, setError] = useState('');
-
-  // Configuration
-  const UPI_ID = "9309555464@ybl";
-  const AMOUNT = "100";
-  
-  const colors = [
-    { name: 'Crimson Red', class: 'bg-red-600', hex: '#DC2626' },
-    { name: 'Ocean Blue', class: 'bg-blue-600', hex: '#2563EB' },
-    { name: 'Emerald Green', class: 'bg-green-600', hex: '#16A34A' },
-    { name: 'Royal Purple', class: 'bg-purple-600', hex: '#9333EA' },
-    { name: 'Sunny Yellow', class: 'bg-yellow-500', hex: '#EAB308' },
-    { name: 'Midnight Black', class: 'bg-black', hex: '#000000' },
-  ];
-
-  const generateUPILink = () => {
-    const params = new URLSearchParams({
-      pa: UPI_ID,
-      pn: "Color Unlock",
-      am: AMOUNT,
-      cu: "INR",
-      tn: `Unlock ${pendingColor?.name}`
-    });
-    return `upi://pay?${params.toString()}`;
-  };
-
-  const handleColorClick = (color) => {
-    if (color.class === bgColor) return;
-    setPendingColor(color);
-    setUtr(''); // Reset input
-    setError('');
-    setShowPaymentModal(true);
-  };
-
-  const verifyUTR = () => {
-    // 1. Basic Validation: UPI UTRs are always 12 digits
-    const utrRegex = /^\d{12}$/;
-
-    if (!utrRegex.test(utr)) {
-      setError("Invalid UTR. Please enter the 12-digit Transaction ID from PhonePe/GPay.");
-      return;
+const Resume = () => {
+  // --- DATA SOURCE (Edit this section) ---
+  const resumeData = {
+    header: {
+      name: "JOHN A. HARVARD",
+      address: "Cambridge, MA",
+      phone: "(555) 123-4567",
+      email: "john.harvard@college.edu",
+      linkedin: "linkedin.com/in/johnharvard",
+      github: "github.com/johnharvard"
+    },
+    education: [
+      {
+        school: "Harvard University",
+        location: "Cambridge, MA",
+        degree: "Bachelor of Science in Computer Science, cum laude",
+        date: "May 2025",
+        details: [
+          "GPA: 3.9/4.0",
+          "Relevant Coursework: Data Structures, Algorithms, Distributed Systems, Machine Learning, Operating Systems.",
+          "Honors: John Harvard Scholar (Top 5%), Dean’s List (All Semesters)."
+        ]
+      }
+    ],
+    experience: [
+      {
+        company: "Tech Giant Corp",
+        location: "San Francisco, CA",
+        role: "Software Engineering Intern",
+        date: "May 2024 – Aug 2024",
+        bullets: [
+          "Engineered a scalable microservice using Go and gRPC to handle 50k+ daily requests, reducing latency by 40%.",
+          "Collaborated with cross-functional teams to integrate GraphQL endpoints, enhancing frontend data fetching efficiency.",
+          "Automated deployment pipelines using Docker and Jenkins, cutting deployment time from 20 minutes to 5 minutes."
+        ]
+      },
+      {
+        company: "StartUp Inc.",
+        location: "Remote",
+        role: "Full Stack Developer",
+        date: "June 2023 – Aug 2023",
+        bullets: [
+          "Developed a responsive e-commerce web application using React, Node.js, and PostgreSQL.",
+          "Implemented secure user authentication with OAuth 2.0 and integrated Stripe API for payment processing.",
+          "Optimized database queries, resulting in a 25% improvement in page load speeds for high-traffic product pages."
+        ]
+      }
+    ],
+    projects: [
+      {
+        name: "Algorithmic Trading Bot",
+        tech: "Python, Pandas, AWS",
+        bullets: [
+          "Built a high-frequency trading bot that executes strategies based on real-time market data using WebSockets.",
+          "Backtested strategies over 5 years of historical data, achieving a simulated annualized return of 15%.",
+          "Deployed on AWS EC2 for continuous uptime and integrated SMS alerts for trade execution notifications."
+        ]
+      }
+    ],
+    skills: {
+      languages: "Java, Python, C++, JavaScript (ES6+), TypeScript, SQL, Go",
+      frameworks: "React, Node.js, Express, Spring Boot, Django, Flask",
+      tools: "Git, Docker, Kubernetes, AWS, Linux/Unix, Jenkins, MongoDB"
     }
-
-    // 2. (Optional) Cheat Check: Prevent them from using "123456789012"
-    if (utr === '123456789012' || utr === '000000000000') {
-      setError("Please enter the actual Transaction ID.");
-      return;
-    }
-
-    // 3. Success "Simulation"
-    setBgColor(pendingColor.class);
-    setShowPaymentModal(false);
-    setPendingColor(null);
-    alert(`Success! Validated UTR: ${utr}`);
   };
 
-  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(generateUPILink())}`;
-
+  // --- COMPONENT RENDER ---
   return (
-    <div className={`min-h-screen transition-colors duration-700 ease-in-out ${bgColor} flex items-center justify-center p-6 font-sans`}>
-      
-      <div className="bg-white/90 backdrop-blur-md rounded-3xl shadow-2xl p-8 max-w-2xl w-full text-center border border-white/20">
-        <h1 className="text-4xl font-black text-gray-900 mb-2">Premium Color Changer</h1>
-        <p className="text-gray-500 mb-8 font-medium">Unlock exclusive themes for ₹{AMOUNT}</p>
-
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {colors.map((color) => {
-            const isActive = bgColor === color.class;
-            return (
-              <button
-                key={color.name}
-                onClick={() => handleColorClick(color)}
-                className={`relative group h-32 rounded-2xl flex flex-col items-center justify-center transition-all duration-300 border-4 
-                  ${isActive ? 'border-black scale-105 shadow-xl' : 'border-transparent hover:scale-105 hover:shadow-lg'}
-                  ${color.class}
-                `}
-              >
-                {!isActive && <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent rounded-xl transition-colors" />}
-                {isActive ? <CheckCircle className="text-white w-8 h-8 drop-shadow-md" /> : (
-                  <div className="flex flex-col items-center gap-1">
-                    <Lock className="text-white/80 w-6 h-6 group-hover:scale-110 transition-transform" />
-                    <span className="text-white/90 text-xs font-bold bg-black/30 px-2 py-1 rounded-full">₹100</span>
-                  </div>
-                )}
-                <span className="absolute bottom-2 text-white text-xs font-bold uppercase tracking-wide opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md">{color.name}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {showPaymentModal && pendingColor && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl animate-in slide-in-from-bottom-10">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold text-gray-900">Unlock {pendingColor.name}</h3>
-              <button onClick={() => setShowPaymentModal(false)} className="bg-gray-100 p-2 rounded-full"><X className="w-5 h-5 text-gray-600" /></button>
-            </div>
-
-            <div className="bg-gray-50 rounded-2xl p-4 flex flex-col items-center border-2 border-dashed border-gray-200 mb-4">
-              <img src={qrCodeUrl} alt="Payment QR" className="w-40 h-40 rounded-lg mix-blend-multiply" />
-            </div>
-
-            <div className="space-y-4">
-              <a href={generateUPILink()} className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-colors">
-                <Smartphone className="w-5 h-5" /> Pay ₹{AMOUNT}
-              </a>
-              
-              <div className="relative flex py-1 items-center">
-                <div className="flex-grow border-t border-gray-200"></div>
-                <span className="flex-shrink-0 mx-4 text-gray-400 text-[10px] uppercase font-bold">Paste UTR Below</span>
-                <div className="flex-grow border-t border-gray-200"></div>
-              </div>
-
-              {/* UTR Input Section */}
-              <div>
-                <div className="relative">
-                  <KeyRound className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-                  <input 
-                    type="number" 
-                    placeholder="Enter 12-digit UTR ID" 
-                    value={utr}
-                    onChange={(e) => setUtr(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 bg-gray-100 rounded-xl font-mono text-sm border-2 border-transparent focus:border-blue-500 focus:bg-white outline-none transition-all"
-                  />
-                </div>
-                {error && <p className="text-red-500 text-xs mt-1 font-bold ml-1">{error}</p>}
-              </div>
-
-              <button onClick={verifyUTR} className="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-green-200 transition-transform active:scale-95">
-                <CheckCircle className="w-5 h-5" /> Verify & Unlock
-              </button>
-            </div>
+    <div className="bg-gray-100 min-h-screen p-8 print:p-0 print:bg-white flex justify-center">
+      {/* Paper Container - Simulates US Letter Size */}
+      <div 
+        className="bg-white w-[8.5in] min-h-[11in] shadow-lg print:shadow-none p-[0.5in] text-black"
+        style={{ fontFamily: "'Times New Roman', Times, serif" }}
+      >
+        
+        {/* HEADER */}
+        <header className="text-center mb-6">
+          <h1 className="text-2xl font-bold uppercase tracking-wide mb-1">
+            {resumeData.header.name}
+          </h1>
+          <div className="text-sm">
+            <span>{resumeData.header.address}</span>
+            <span className="mx-1">•</span>
+            <span>{resumeData.header.phone}</span>
+            <span className="mx-1">•</span>
+            <a href={`mailto:${resumeData.header.email}`} className="hover:underline">{resumeData.header.email}</a>
+            <span className="mx-1">•</span>
+            <a href={`https://${resumeData.header.linkedin}`} className="hover:underline">{resumeData.header.linkedin}</a>
+            <span className="mx-1">•</span>
+            <a href={`https://${resumeData.header.github}`} className="hover:underline">{resumeData.header.github}</a>
           </div>
-        </div>
-      )}
+        </header>
+
+        {/* EDUCATION SECTION */}
+        <section className="mb-4">
+          <h2 className="text-sm font-bold uppercase border-b border-black mb-2">Education</h2>
+          {resumeData.education.map((edu, index) => (
+            <div key={index} className="mb-2">
+              <div className="flex justify-between items-baseline">
+                <h3 className="font-bold text-base">{edu.school}</h3>
+                <span className="text-sm">{edu.location}</span>
+              </div>
+              <div className="flex justify-between items-baseline italic">
+                <span className="text-sm">{edu.degree}</span>
+                <span className="text-sm">{edu.date}</span>
+              </div>
+              <ul className="list-disc list-outside ml-4 mt-1 text-sm leading-tight">
+                {edu.details.map((detail, i) => (
+                  <li key={i}>{detail}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </section>
+
+        {/* EXPERIENCE SECTION */}
+        <section className="mb-4">
+          <h2 className="text-sm font-bold uppercase border-b border-black mb-2">Experience</h2>
+          {resumeData.experience.map((job, index) => (
+            <div key={index} className="mb-3">
+              <div className="flex justify-between items-baseline">
+                <h3 className="font-bold text-base">{job.company}</h3>
+                <span className="text-sm">{job.location}</span>
+              </div>
+              <div className="flex justify-between items-baseline italic mb-1">
+                <span className="text-sm">{job.role}</span>
+                <span className="text-sm">{job.date}</span>
+              </div>
+              <ul className="list-disc list-outside ml-4 text-sm leading-snug">
+                {job.bullets.map((bullet, i) => (
+                  <li key={i} className="mb-0.5">{bullet}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </section>
+
+        {/* PROJECTS SECTION */}
+        <section className="mb-4">
+          <h2 className="text-sm font-bold uppercase border-b border-black mb-2">Leadership & Projects</h2>
+          {resumeData.projects.map((proj, index) => (
+            <div key={index} className="mb-2">
+              <div className="flex justify-between items-baseline">
+                <div>
+                  <span className="font-bold text-base">{proj.name}</span>
+                  <span className="text-sm italic ml-1"> — {proj.tech}</span>
+                </div>
+              </div>
+              <ul className="list-disc list-outside ml-4 mt-1 text-sm leading-snug">
+                {proj.bullets.map((bullet, i) => (
+                  <li key={i} className="mb-0.5">{bullet}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </section>
+
+        {/* SKILLS SECTION */}
+        <section className="mb-4">
+          <h2 className="text-sm font-bold uppercase border-b border-black mb-2">Technical Skills & Interests</h2>
+          <div className="text-sm leading-snug">
+            <p className="mb-1">
+              <span className="font-bold">Languages:</span> {resumeData.skills.languages}
+            </p>
+            <p className="mb-1">
+              <span className="font-bold">Frameworks:</span> {resumeData.skills.frameworks}
+            </p>
+            <p>
+              <span className="font-bold">Developer Tools:</span> {resumeData.skills.tools}
+            </p>
+          </div>
+        </section>
+
+      </div>
     </div>
   );
 };
 
-export default App;
+export default Resume;
